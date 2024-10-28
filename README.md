@@ -29,6 +29,12 @@ The rounded-off mantissa is zero-padded and combined with the sign, exponent bit
   - Remaining cases: No need to increment intermediate exponent - net mantissa is stored in [22:0] bits. 
 The sign, exponent and final mantissa bits are combined to give the net output in FP32 form.
 
+Round-Off Logic: 
+To Round off any number of bits to 'n' bits after the decimal place, we use the following logic.
+a. If the nth bit is followed by a zero, the value is clearly less than 0.5, and closer to the lower value. In this case, we can simply truncate the number to n-bits.
+b. If the nth bit is followed by a one, and there are other one-bits present afterwards, this value is >0.5 and we must increment the truncated-to-n-bits number by 1 at the nth decimal place. 
+c. If the nth bit is followed by a one, and then a series of zeroes (no 1s present afterwards), we follow "Ties-to-Even" logic where we try to make the nth bit = 0. Hence we apply conditions checking the value of the nth bit for this case.
+To differentiate between case b and c, we use a mask function to generate a series of 1s after the nth decimal place and perform an AND operation with the non-rounded off number. In case this results in zero, it corresponds to Ties-to-Even case, otherwise the nth bit is incremented by 1.
 
 ### Understanding Pipelining
 
