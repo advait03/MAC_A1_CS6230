@@ -11,7 +11,8 @@ While it is possible to increase the range of inputs, the coverage report was no
 The user can increase the range using the computational resources available.
 The sample coverage report shows 100% coverage for the test cases chosen! Report can be found in the mac folder.
 
-Make a clone of the mac folder in this repo. Run the following commands.
+### We have included only +ve test cases. This is because 0 can't be represented accurately in fp32, and we wanted to avoid inconsistencies.
+Make a clone of the Mac folder in this repo. Run the following commands.
 ## To activate pyenv
 
 ```
