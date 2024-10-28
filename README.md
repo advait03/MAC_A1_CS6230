@@ -36,7 +36,25 @@ The pipelined code for MAC operation elegantly pipelines two test cases simultan
  - This facilitates the computation of the product of the second test case while simultaneously computing the sum of a*b and c for the first case.
  - Hence, there is a significant improvement in the time taken to run multiple test cases!
 
+### Performance comparison
+
+#### Unpipelined Performance
+
+Below is the image depicting 1049 test cases of int and 1000 test cases of float for the unpipelined Mac operator.
+![unpipelined](https://github.com/user-attachments/assets/6a75e9eb-db5b-4f5e-9b8b-f5744990c558)
+
+It takes a total of 61485000 ns to complete all test cases.
+
+#### Pipelined Performance
+
+Below is the image depicting 1049 test cases of int and 1000 test cases of float for the pipelined Mac operator.
+![pipelined](https://github.com/user-attachments/assets/d402dc32-4016-4569-b2bf-1befe7e72535)
+
+It takes a total of 20555000 ns to complete all test cases.
+#### Hence we see a speedup of 1/3 factor in time taken
+
 ## Contributions:
+
 We worked on the entire MAC Design together, helping each other wherever we were stuck. Detailed contributions are mentioned below:
 1. Carry-Look Ahead Adder: Advait
 2. Shift-&-Add Multiplier: Sooraj
