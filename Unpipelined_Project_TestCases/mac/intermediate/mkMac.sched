@@ -1,0 +1,35 @@
+=== Generated schedule for mkMac ===
+
+Method schedule
+---------------
+Method: get_inputs
+Ready signal: True
+Sequenced before (restricted): get_inputs
+Sequenced after (restricted): macop
+ 
+Method: macop
+Ready signal: rg_out_valid
+Conflict-free: macop
+Sequenced before (restricted): get_inputs
+ 
+Rule schedule
+-------------
+Rule: rg_inp_valid__dreg_update
+Predicate: True
+Blocking rules: (none)
+ 
+Rule: rg_out_valid__dreg_update
+Predicate: True
+Blocking rules: (none)
+ 
+Rule: rl_mac
+Predicate: rg_inp_valid
+Blocking rules: (none)
+ 
+Logical execution order: macop,
+			 rl_mac,
+			 get_inputs,
+			 rg_inp_valid__dreg_update,
+			 rg_out_valid__dreg_update
+
+=====================================

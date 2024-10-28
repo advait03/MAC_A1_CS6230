@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1730131912" />
+    <testcase name="test_mac" classname="test_mac" file="/home/shakti/CS6230/Unpipelined_Project_TestCases/mac/mac_verif/test_mac.py" lineno="58" time="1.7410838603973389" sim_time_ns="61485000.001" ratio_time="35314209.38389969" />
+  </testsuite>
+</testsuites>
