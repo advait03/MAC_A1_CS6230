@@ -55,7 +55,7 @@ Below is the image depicting 1049 test cases of int and 1000 test cases of float
 ![pipelined](https://github.com/user-attachments/assets/d402dc32-4016-4569-b2bf-1befe7e72535)
 
 It takes a total of 20555000 ns to complete all test cases.
-#### Hence we see a speedup of 1/3 factor in time taken
+#### Thus, we see a speedup by 3x in the Pipelined MAC code as compared to Unpipelined.
 
 ## Contributions:
 
