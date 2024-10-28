@@ -1,5 +1,11 @@
-# Counter Example
+# Run Commands for the code
+This is the folder for testing coverage of fp32 MAC.
 
+## Test Cases
+The code works for 1049 int and 1000 float test cases and the performance is seen the main readme file
+
+
+Make a clone of the mac folder in this repo. Run the following commands.
 ## To activate pyenv
 
 ```
