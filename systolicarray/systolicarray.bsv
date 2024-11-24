@@ -4,8 +4,12 @@ import Vector::*;
 import FIFO::*;
 import SpecialFIFOs::*;
 import DReg :: *;
+
+//importing mac module which we implemented in assignment1
 import mac::*;
 
+
+//Interface for 1 cell of systolic array
 interface SystolicCell;
     method Action putA(Bit#(16) a);
     method Action putB(Bit#(16) b);
@@ -14,8 +18,10 @@ interface SystolicCell;
     method Bit#(16) getA();
     method Bit#(16) getB();
     method Bit#(32) getC();
+    method Bit#(1) getS();
 endinterface
 
+//Interface for systolic array
 interface SystolicArray;
     method Action loadA(Vector#(4, Bit#(16)) a);
     method Action loadB(Vector#(4, Bit#(16)) b);
@@ -24,6 +30,7 @@ interface SystolicArray;
     method Bool isReady();
 endinterface
 
+//Molule for 1 cell of systolic array
 (* synthesize *)
 module mkSystolicCell(SystolicCell);
     Mac mac <- mkMac();
@@ -31,14 +38,16 @@ module mkSystolicCell(SystolicCell);
     Reg#(Bit#(16)) regA <- mkReg(0);
     Reg#(Bit#(16)) regB <- mkReg(0);
     Reg#(Bit#(32)) regC <- mkReg(0);
+    Reg#(Bit#(1)) regS <- mkReg(0);
     Reg#(Bit#(32)) regCOut <- mkReg(0);
     Reg#(Bool) validA <- mkDReg(False);
     Reg#(Bool) validB <- mkDReg(False);
     Reg#(Bool) validC <- mkDReg(False);
+    Reg#(Bool) validS <- mkDReg(False);
     Reg#(Bool) validOuts <- mkDReg(False);
 
-    rule compute (validA && validB && validC);
-        mac.get_inputs(regA, regB, regC, 0);
+    rule compute (validA && validB && validC && validS);
+        mac.get_inputs(regA, regB, regC, regS);
     endrule
     
     rule getmac (mac.validflag());
@@ -62,7 +71,8 @@ module mkSystolicCell(SystolicCell);
     endmethod
     
     method Action putS(Bit#(1) s);
-        // No specific action for S in this example
+        regS <= s;
+        validS <= True;
     endmethod
     
     method Bit#(16) getA() if (validOuts);
@@ -76,10 +86,16 @@ module mkSystolicCell(SystolicCell);
     method Bit#(32) getC() if (validOuts);
         return regCOut;
     endmethod
+    
+    method Bit#(1) getS() if (validOuts);
+        return regS;
+    endmethod
 endmodule
 
+//Molule for systolic array
 (* synthesize *)
 module mkSystolicArray(SystolicArray);
+    //4*4 initiation of systolic cells to form systolic array
     Vector#(4, Vector#(4, SystolicCell)) cells <- replicateM(replicateM(mkSystolicCell));
     
     Reg#(Bool) initialized <- mkReg(False);
@@ -92,16 +108,18 @@ module mkSystolicArray(SystolicArray);
     Vector#(4, Vector#(4, Reg#(Bit#(16)))) tempA <- replicateM(replicateM(mkReg(0)));
     Vector#(4, Vector#(4, Reg#(Bit#(16)))) tempB <- replicateM(replicateM(mkReg(0)));
     Vector#(4, Vector#(4, Reg#(Bit#(32)))) tempC <- replicateM(replicateM(mkReg(0)));
+    Vector#(4, Vector#(4, Reg#(Bit#(1)))) tempS <- replicateM(replicateM(mkReg(0)));
 
 
     // Rule 1: Fetch values for `C` and store them temporarily
     rule getC_data (datacollect == False);
-        for (Integer i = 1; i < 4; i = i + 1) begin
+        for (Integer i = 0; i < 4; i = i + 1) begin
             for (Integer j = 0; j < 4; j = j + 1) begin
                 // Pass A values horizontally
                 tempA[i][j] <= cells[i][j].getA();
                 tempB[i][j] <= cells[i][j].getB();
                 tempC[i][j] <= cells[i][j].getC();
+                tempS[i][j] <= cells[i][j].getS();
             end
         end
         datacollect <= True;
@@ -109,13 +127,14 @@ module mkSystolicArray(SystolicArray);
 
     // Rule 2: Pass the stored `C` values to the next row
     rule putC_data (datacollect && bcheck);
-        for (Integer i = 1; i < 4; i = i + 1) begin
+        for (Integer i = 0; i < 4; i = i + 1) begin
             for (Integer j = 0; j < 4; j = j + 1) begin
                 if (j > 0) begin
                     cells[i][j].putA(tempA[i][j-1]);
                 end
                 if (i > 0) begin
                     cells[i][j].putC(tempC[i-1][j]);
+                    cells[i][j].putS(tempS[i-1][j]);
                     if (cycle < 4) begin
                     	cells[i][j].putB(tempB[i-1][j]);
                     end
@@ -169,4 +188,3 @@ module mkSystolicArray(SystolicArray);
 endmodule
 
 endpackage
-
