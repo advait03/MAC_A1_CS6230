@@ -1,3 +1,7 @@
+# **Introduction**
+
+This is the documentation of bsv code to implement systolic array multiplier using mac units. This section deals with the microarchitecture expanation, we have documented the issues faced during simulation in **"CompilationIssues.md"**.
+
 # **Systolic Array Functionality**
 
 This code defines a **systolic array**, a hardware design pattern commonly used in digital signal processing (DSP) and machine learning applications (e.g., matrix multiplication in neural networks). It consists of interconnected processing elements (**systolic cells**) that compute and pass intermediate results in a pipelined fashion.
@@ -170,48 +174,5 @@ A **systolic array** is a specialized hardware architecture designed for efficie
 - The results are compared against the expected matrix using `numpy.testing.assert_array_almost_equal`.
 
 ---
-
-### Code Snippet Explanation
-
-#### Test for `int8` Datatype
-
-```python
-async def test_systolic_array_int8(dut):
-    # 1. Clock Initialization
-    clock = Clock(dut.CLK, 10, units="ns")
-    cocotb.start_soon(clock.start())
-    
-    # 2. Reset
-    dut.RST_N.value = 0
-    await RisingEdge(dut.CLK)
-    dut.RST_N.value = 1
-
-    # 3. Generate Test Data
-    A = np.random.randint(-128, 127, (4, 4), dtype=np.int8)
-    B = np.random.randint(-128, 127, (4, 4), dtype=np.int8)
-    expected = int8_matrix_multiply(A, B)
-
-    # 4. Load Data into DUT
-    for i in range(4):
-        dut.loadA.value = [int(x) for x in A[i]]
-        dut.loadB.value = [int(x) for x in B[:, i]]
-        await RisingEdge(dut.CLK)
-
-    # 5. Wait for Computation to Complete
-    while not dut.isReady.value:
-        await RisingEdge(dut.CLK)
-
-    # 6. Retrieve Results
-    Res = np.zeros((4, 4), dtype=np.int8)
-    for cycle in range(7):
-        last_row = [dut.getResult[3][col].value.integer for col in range(4)]
-        for k in range(cycle + 1):
-            row_idx = cycle - k
-            col_idx = k
-            if 0 <= row_idx < 4 and 0 <= col_idx < 4:
-                Res[row_idx][col_idx] = last_row[col_idx]
-
-    # 7. Validate Results
-    np.testing.assert_array_almost_equal(Res, expected)
 
 
