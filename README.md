@@ -1,4 +1,20 @@
 # MAC_A1_CS6230
+
+Assignment 1:
+
+1. int32 :
+a. pipelined design: code - completed, verification - completed
+b. unpipeined design : code - completed, verification - completed
+
+2. bfloat16:
+a. pipelined design: code - completed, verification - completed
+b. unpipeined design : code - completed, verification - complete
+
+Assignment 2:
+
+int32: code - completed, verification - basic code is written, unable to verify using verilator
+bfloat16: code - completed, verification - basic code is written, unable to verify using verilator
+
 Implements and Verifies a Multiply-Accumulate (MAC) Unit Design using Bluespec System Verilog(BSV) and Python. Performs Binary multiplication, addition in one case and BF16 Multiplication, FP32 Addition in the other case.  Written by Advait Iyer (EE21B006) and SN Sooraj Skanda (EE21B132).
 
 ## The given repository contains 4 folders:
